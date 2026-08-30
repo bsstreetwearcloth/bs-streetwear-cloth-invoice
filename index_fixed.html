@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>BS Streetwear Cloth - Management</title>
+<style>
+*{box-sizing:border-box}
+:root{--navy:#111827;--blue:#3b82f6;--bg:#f3f4f6;--card:#fff;--muted:#6b7280;--line:#e5e7eb}
+body{margin:0;font-family:Arial,Helvetica,sans-serif;background:var(--bg);color:#111827}
+header{background:#111827;color:#fff;padding:20px;position:sticky;top:0;z-index:5}
+header h1{margin:0;font-size:25px} header p{margin:6px 0 0;color:#9ca3af}
+nav{display:flex;gap:10px;overflow-x:auto;background:#fff;padding:12px;border-bottom:1px solid #ddd}
+nav button{border:0;border-radius:14px;padding:13px 18px;background:#eef0f3;color:#3b82f6;font-size:16px;font-weight:700;white-space:nowrap}
+nav button.active{background:#111827;color:#fff}
+main{max-width:1100px;margin:auto;padding:24px 18px}
+.page{display:none}.page.active{display:block}
+h2{font-size:34px;margin:10px 0 24px}
+.card{background:#fff;border-radius:22px;padding:22px;margin-bottom:20px;box-shadow:0 5px 18px #0000000b}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+.stat span{display:block;color:#6b7280;font-size:17px}.stat b{display:block;font-size:32px;margin-top:12px}
+.field{margin-bottom:14px}.field label{display:block;font-weight:700;margin-bottom:7px}
+input,select,textarea{width:100%;padding:13px;border:1px solid #d1d5db;border-radius:10px;font-size:16px;background:#fff}
+textarea{min-height:90px}
+.btn{border:0;border-radius:10px;padding:11px 15px;font-weight:700;cursor:pointer}
+.green{background:#16a34a;color:#fff}.red{background:#dc2626;color:#fff}.gray{background:#e5e7eb;color:#111827}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:15px}
+.tablewrap{overflow:auto}table{width:100%;border-collapse:collapse;min-width:650px}
+th,td{text-align:left;padding:12px;border-bottom:1px solid #e5e7eb}th{background:#f3f4f6}
+.right{text-align:right}.muted{color:#6b7280}
+
+/* Invoice screen */
+.invoice-paper{background:#fff;max-width:850px;margin:auto;padding:42px 44px;border-radius:4px;box-shadow:0 8px 30px #00000012}
+.inv-topline{height:8px;background:#555;margin-bottom:18px}
+.inv-head{display:grid;grid-template-columns:130px 1fr 170px;gap:22px;align-items:start}
+.logo-box{width:120px;height:90px;border:2px solid #222;border-radius:12px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:20px;text-align:center;line-height:1.05}
+.inv-company h3{margin:4px 0 10px;font-size:26px;color:#555}.inv-company p{margin:5px 0;color:#666;font-size:14px;line-height:1.35}
+.inv-meta{text-align:right;color:#666;font-size:13px}.inv-meta b{display:block;color:#555;font-size:14px;margin-bottom:4px}
+.inv-meta .value{margin-bottom:18px;font-size:15px}
+.inv-customer{margin-top:55px;margin-bottom:24px}.inv-customer .label{font-size:13px;color:#666;margin-bottom:12px}.inv-customer b{font-size:16px}
+.inv-table{width:100%;min-width:0;border-collapse:collapse}.inv-table th{background:#555;color:#fff;font-size:12px;padding:10px}.inv-table td{padding:9px;border-bottom:0;font-size:14px}
+.inv-summary{margin-left:auto;width:50%;margin-top:24px}.sum-row{display:flex;justify-content:space-between;padding:8px 0;color:#555}.sum-row.total{font-weight:700}.sum-row.remaining{background:#f3f3f3;margin-top:10px;padding:16px;font-weight:700}
+.payment{border:1px solid #aaa;border-radius:10px;margin-top:120px;padding:18px}.payment h4{text-align:center;margin:0 0 15px;font-size:15px}.bank-grid{display:grid;grid-template-columns:1fr 1fr;gap:30px}.bank b{display:block;margin-bottom:7px}.bank p{margin:5px 0;color:#555;font-size:13px}
+.thanks{margin-top:22px;color:#666;font-size:13px}
+@media(max-width:800px){.grid{grid-template-columns:1fr 1fr}.inv-head{grid-template-columns:90px 1fr}.inv-meta{grid-column:2;text-align:left}.invoice-paper{padding:25px 18px}.inv-summary{width:65%}}
+@media(max-width:520px){.grid{grid-template-columns:1fr}.inv-head{grid-template-columns:1fr}.inv-meta{grid-column:auto}.inv-summary{width:100%}.payment{margin-top:60px}.bank-grid{grid-template-columns:1fr}}
+@media print{
+*{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+html,body{background:#fff!important;margin:0!important;padding:0!important}
+body{font-size:11px!important}
+.no-print,header,nav,main>.page:not(#invoice){display:none!important}
+main{display:block!important;max-width:none!important;margin:0!important;padding:0!important}
+#invoice{display:block!important;padding:0!important;margin:0!important}
+.invoice-paper{
+  position:relative!important;
+  width:190mm!important;
+  height:277mm!important;
+  min-height:277mm!important;
+  max-width:none!important;
+  margin:0 auto!important;
+  padding:9mm 10mm 34mm!important;
+  box-shadow:none!important;
+  border-radius:0!important;
+  overflow:hidden!important;
+}
+.inv-topline{height:5px!important;margin-bottom:10px!important}
+.inv-head{grid-template-columns:28mm 1fr 35mm!important;gap:7mm!important}
+.logo-box{width:27mm!important;height:21mm!important;font-size:11px!important;border-radius:6px!important}
+.inv-company h3{font-size:18px!important;margin:2px 0 6px!important}
+.inv-company p{font-size:9px!important;margin:3px 0!important}
+.inv-meta{font-size:9px!important}
+.inv-meta b{font-size:10px!important;margin-bottom:2px!important}
+.inv-meta .value{font-size:10px!important;margin-bottom:9px!important}
+.inv-customer{margin-top:22mm!important;margin-bottom:8mm!important}
+.inv-customer .label{font-size:9px!important;margin-bottom:6px!important}
+.inv-customer b{font-size:11px!important}
+.inv-table th{font-size:8px!important;padding:6px!important}
+.inv-table td{font-size:10px!important;padding:5px!important}
+.inv-summary{width:50%!important;margin-top:10px!important}
+.sum-row{padding:5px 0!important;font-size:10px!important}
+.sum-row.remaining{margin-top:6px!important;padding:9px!important}
+.payment{
+  position:absolute!important;
+  left:10mm!important;
+  right:10mm!important;
+  bottom:12mm!important;
+  margin:0!important;
+  padding:9px 11px!important;
+  border-radius:6px!important;
+}
+.payment h4{font-size:10px!important;margin:0 0 8px!important}
+.bank-grid{gap:15mm!important}
+.bank b{font-size:10px!important;margin-bottom:4px!important}
+.bank p{font-size:8.5px!important;margin:3px 0!important}
+.thanks{
+  position:absolute!important;
+  left:10mm!important;
+  right:10mm!important;
+  bottom:5mm!important;
+  margin:0!important;
+  font-size:8px!important;
+}
+@page{size:A4 portrait;margin:10mm}
+}
+</style>
+</head>
+<body>
+<header>
+<h1 id="storeTitle">BS STREETWEAR CLOTH</h1>
+<p>Invoice &amp; Store Management</p>
+</header>
+
+<nav class="no-print">
+<button class="active" onclick="tab('dashboard',this)">🏠 Dashboard</button>
+<button onclick="tab('orders',this)">🧾 Pesanan</button>
+<button onclick="tab('invoice',this)">📄 Invoice</button>
+<button onclick="tab('stock',this)">📦 Stok</button>
+<button onclick="tab('expense',this)">💸 Pengeluaran</button>
+<button onclick="tab('reports',this)">📊 Laporan</button>
+<button onclick="tab('settings',this)">⚙️ Pengaturan</button>
+</nav>
+
+<main>
+<section id="dashboard" class="page active">
+<h2>Dashboard</h2>
+<div class="grid">
+<div class="card stat"><span>Total Pesanan</span><b id="sOrders">0</b></div>
+<div class="card stat"><span>Omzet</span><b id="sSales">Rp0</b></div>
+<div class="card stat"><span>Pengeluaran</span><b id="sExpense">Rp0</b></div>
+<div class="card stat"><span>Estimasi Laba</span><b id="sProfit">Rp0</b></div>
+</div>
+<div class="card"><h3>Ringkasan Toko</h3><p class="muted">Kelola pesanan, invoice, stok, pengeluaran, dan laporan BS Streetwear Cloth dalam satu aplikasi.</p></div>
+</section>
+
+<section id="orders" class="page">
+<h2>Pesanan</h2>
+<div class="card">
+<form id="orderForm" onsubmit="event.preventDefault();addOrder()">
+<div class="field"><label>Nama Pelanggan</label><input id="oCustomer" required></div>
+<div class="field"><label>No. WhatsApp</label><input id="oPhone"></div>
+<div class="field"><label>Produk</label><input id="oProduct" value="T-SHIRT" required></div>
+<div class="field"><label>Jumlah</label><input id="oQty" type="number" value="1" min="1"></div>
+<div class="field"><label>Harga Satuan</label><input id="oPrice" type="number" value="90000"></div>
+<div class="field"><label>DP</label><input id="oDp" type="number" value="0"></div>
+<div class="field"><label>Status</label><select id="oStatus"><option>DP</option><option>Lunas</option><option>Produksi</option><option>Selesai</option><option>Belum Bayar</option></select></div>
+<div class="field"><label>Tanggal</label><input id="oDate" type="date"></div>
+<button class="btn green">Simpan Pesanan</button>
+</form>
+</div>
+<div class="card tablewrap"><table>
+<thead><tr><th>No. Invoice</th><th>Pelanggan</th><th>Produk</th><th>Total</th><th>Status</th><th>Aksi</th></tr></thead>
+<tbody id="orderTable"></tbody></table></div>
+</section>
+
+<section id="invoice" class="page">
+<h2 class="no-print">Invoice</h2>
+<div class="card no-print">
+<div class="field"><label>Pilih Pesanan</label><select id="invoiceSelect" onchange="showInvoice()"></select></div>
+</div>
+
+<div class="invoice-paper" id="invoicePaper">
+<div class="inv-topline"></div>
+<div class="inv-head">
+<div class="logo-box">BS<br>STREETWEAR<br>CLOTH</div>
+<div class="inv-company">
+<h3 id="invStoreName">BS STREETWEAR CLOTH</h3>
+<p id="storeAddress">Jalan Jimbaran Telagapanas, Samban, Kabupaten Semarang, Jawa Tengah, Indonesia</p>
+<p id="storePhone">WhatsApp: -</p>
+</div>
+<div class="inv-meta">
+<b>FAKTUR</b><div class="value" id="invNo">-</div>
+<b>TANGGAL</b><div class="value" id="invDate">-</div>
+</div>
+</div>
+
+<div class="inv-customer">
+<div class="label">UNTUK</div>
+<div id="invCustomer">Pilih pesanan untuk melihat invoice.</div>
+</div>
+
+<table class="inv-table">
+<thead><tr><th>DESKRIPSI</th><th style="text-align:right">MENILAI</th><th style="text-align:center">JUMLAH</th><th style="text-align:right">JUMLAH</th></tr></thead>
+<tbody id="invItems"></tbody>
+</table>
+
+<div class="inv-summary">
+<div class="sum-row total"><span>TOTAL</span><span id="invTotal">Rp0</span></div>
+<div class="sum-row"><span>DP T-SHIRT</span><span id="invDp">Rp0</span></div>
+<div class="sum-row remaining"><span>TOTAL KEKURANGAN</span><span id="invRemain">Rp0</span></div>
+</div>
+
+<div class="payment">
+<h4>METODE PEMBAYARAN</h4>
+<div class="bank-grid">
+<div class="bank">
+<b>Bank Central Asia (BCA)</b>
+<p>Nama Rekening: <strong id="bcaName">Randirawan</strong></p>
+<p>No Rek: <strong id="bcaNo">3201-1621-39</strong></p>
+</div>
+<div class="bank">
+<b>Bank Mandiri</b>
+<p>Nama Rekening: <strong id="mandiriName">Randirawan</strong></p>
+<p>No Rek: <strong id="mandiriNo">136-00-1927498-1</strong></p>
+</div>
+</div>
+</div>
+<div class="thanks">Terima kasih telah mempercayakan pesanan Anda kepada BS Streetwear Cloth.</div>
+</div>
+
+<div class="actions no-print">
+<button class="btn green" onclick="printInvoice()">🖨️ Cetak / Simpan PDF</button>
+</div>
+</section>
+
+<section id="stock" class="page">
+<h2>Stok Barang</h2>
+<div class="card">
+<form id="stockForm" onsubmit="event.preventDefault();addStock()">
+<div class="field"><label>Nama Barang</label><input id="stName" required></div>
+<div class="field"><label>Kategori</label><input id="stCat" placeholder="Kaos / bahan / lainnya"></div>
+<div class="field"><label>Jumlah</label><input id="stQty" type="number" value="0"></div>
+<div class="field"><label>Harga Modal</label><input id="stCost" type="number" value="0"></div>
+<button class="btn green">Tambah Stok</button>
+</form>
+</div>
+<div class="card tablewrap"><table><thead><tr><th>Barang</th><th>Kategori</th><th>Qty</th><th>Modal</th><th>Aksi</th></tr></thead><tbody id="stockTable"></tbody></table></div>
+</section>
+
+<section id="expense" class="page">
+<h2>Pengeluaran</h2>
+<div class="card">
+<form onsubmit="event.preventDefault();addExpense()">
+<div class="field"><label>Keterangan</label><input id="eName" required></div>
+<div class="field"><label>Nominal</label><input id="eAmount" type="number" required></div>
+<div class="field"><label>Tanggal</label><input id="eDate" type="date"></div>
+<button class="btn green">Simpan Pengeluaran</button>
+</form>
+</div>
+<div class="card tablewrap"><table><thead><tr><th>Tanggal</th><th>Keterangan</th><th>Nominal</th><th>Aksi</th></tr></thead><tbody id="expenseTable"></tbody></table></div>
+</section>
+
+<section id="reports" class="page">
+<h2>Laporan Keuangan</h2>
+<div class="grid">
+<div class="card stat"><span>Omzet</span><b id="rSales">Rp0</b></div>
+<div class="card stat"><span>Pengeluaran</span><b id="rExpense">Rp0</b></div>
+<div class="card stat"><span>Laba Bersih</span><b id="rProfit">Rp0</b></div>
+</div>
+<div class="card tablewrap"><h3>Riwayat Pesanan</h3><table><tbody id="reportTable"></tbody></table></div>
+</section>
+
+<section id="settings" class="page">
+<h2>Pengaturan Toko</h2>
+<div class="card">
+<div class="field"><label>Nama Toko</label><input id="setName"></div>
+<div class="field"><label>Alamat</label><textarea id="setAddress"></textarea></div>
+<div class="field"><label>Nomor WhatsApp</label><input id="setPhone"></div>
+<div class="field"><label>Nama Rekening BCA</label><input id="setBcaName"></div>
+<div class="field"><label>No. Rekening BCA</label><input id="setBcaNo"></div>
+<div class="field"><label>Nama Rekening Mandiri</label><input id="setMandiriName"></div>
+<div class="field"><label>No. Rekening Mandiri</label><input id="setMandiriNo"></div>
+<button class="btn green" onclick="saveSettings()">Simpan Pengaturan</button>
+</div>
+<div class="card"><p class="muted">Data aplikasi tersimpan di browser perangkat ini.</p><button class="btn red" onclick="resetData()">Hapus Semua Data</button></div>
+</section>
+</main>
+
+<script>
+const key='bsStreetwearDataV2';
+const defaults={
+ orders:[],stock:[],expenses:[],
+ settings:{
+  name:'BS STREETWEAR CLOTH',
+  address:'Jalan Jimbaran Telagapanas, Samban, Kabupaten Semarang, Jawa Tengah, Indonesia',
+  phone:'85728212348',
+  bcaName:'Randirawan',bcaNo:'3201-1621-39',
+  mandiriName:'Randirawan',mandiriNo:'136-00-1927498-1'
+ }
+};
+let data=JSON.parse(localStorage.getItem(key)||'null')||defaults;
+data.orders=data.orders||[];data.stock=data.stock||[];data.expenses=data.expenses||[];
+data.settings=Object.assign({},defaults.settings,data.settings||{});
+
+function save(){localStorage.setItem(key,JSON.stringify(data));render()}
+function rp(n){return 'Rp'+Number(n||0).toLocaleString('id-ID')}
+function today(){return new Date().toISOString().slice(0,10)}
+oDate.value=today();eDate.value=today();
+
+function tab(id,btn){
+ document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));
+ document.getElementById(id).classList.add('active');
+ document.querySelectorAll('nav button').forEach(x=>x.classList.remove('active'));
+ if(btn)btn.classList.add('active');render();
+}
+function addOrder(){
+ let q=+oQty.value||1,p=+oPrice.value||0,dp=+oDp.value||0;
+ data.orders.push({id:'BSS'+Date.now().toString().slice(-6),customer:oCustomer.value,phone:oPhone.value,product:oProduct.value,qty:q,price:p,total:q*p,dp,date:oDate.value||today(),status:oStatus.value});
+ orderForm.reset();oQty.value=1;oPrice.value=90000;oDp.value=0;oDate.value=today();save();alert('Pesanan berhasil disimpan');
+}
+function delOrder(i){if(confirm('Hapus pesanan ini?')){data.orders.splice(i,1);save()}}
+function addStock(){data.stock.push({name:stName.value,cat:stCat.value,qty:+stQty.value||0,cost:+stCost.value||0});stockForm.reset();save()}
+function delStock(i){data.stock.splice(i,1);save()}
+function addExpense(){data.expenses.push({name:eName.value,amount:+eAmount.value,date:eDate.value||today()});eName.value='';eAmount.value='';save()}
+function delExpense(i){data.expenses.splice(i,1);save()}
+
+function render(){
+ let sales=data.orders.reduce((a,x)=>a+x.total,0),exp=data.expenses.reduce((a,x)=>a+x.amount,0);
+ sOrders.textContent=data.orders.length;sSales.textContent=rp(sales);sExpense.textContent=rp(exp);sProfit.textContent=rp(sales-exp);
+ rSales.textContent=rp(sales);rExpense.textContent=rp(exp);rProfit.textContent=rp(sales-exp);
+
+ orderTable.innerHTML=data.orders.map((x,i)=>`<tr><td>${x.id}</td><td>${esc(x.customer)}</td><td>${esc(x.product)} (${x.qty})</td><td>${rp(x.total)}</td><td>${esc(x.status)}</td><td><button class="btn gray" onclick="selectInvoice('${x.id}')">Invoice</button> <button class="btn red" onclick="delOrder(${i})">×</button></td></tr>`).join('')||'<tr><td colspan="6">Belum ada pesanan.</td></tr>';
+ stockTable.innerHTML=data.stock.map((x,i)=>`<tr><td>${esc(x.name)}</td><td>${esc(x.cat)}</td><td>${x.qty}</td><td>${rp(x.cost)}</td><td><button class="btn red" onclick="delStock(${i})">×</button></td></tr>`).join('')||'<tr><td colspan="5">Belum ada stok.</td></tr>';
+ expenseTable.innerHTML=data.expenses.map((x,i)=>`<tr><td>${x.date}</td><td>${esc(x.name)}</td><td>${rp(x.amount)}</td><td><button class="btn red" onclick="delExpense(${i})">×</button></td></tr>`).join('')||'<tr><td colspan="4">Belum ada pengeluaran.</td></tr>';
+ reportTable.innerHTML=data.orders.map(x=>`<tr><td>${x.date}</td><td>${x.id}</td><td>${esc(x.customer)}</td><td>${rp(x.total)}</td></tr>`).join('')||'<tr><td>Belum ada data.</td></tr>';
+ invoiceSelect.innerHTML='<option value="">-- Pilih Pesanan --</option>'+data.orders.map(x=>`<option value="${x.id}">${x.id} - ${esc(x.customer)}</option>`).join('');
+ if(data.orders.length && !invoiceSelect.value){invoiceSelect.value=data.orders[0].id;showInvoice()}
+
+ storeTitle.textContent=data.settings.name;invStoreName.textContent=data.settings.name;storeAddress.textContent=data.settings.address;
+ storePhone.textContent='WhatsApp: '+(data.settings.phone||'-');
+ bcaName.textContent=data.settings.bcaName;bcaNo.textContent=data.settings.bcaNo;
+ mandiriName.textContent=data.settings.mandiriName;mandiriNo.textContent=data.settings.mandiriNo;
+ setName.value=data.settings.name;setAddress.value=data.settings.address;setPhone.value=data.settings.phone;
+ setBcaName.value=data.settings.bcaName;setBcaNo.value=data.settings.bcaNo;setMandiriName.value=data.settings.mandiriName;setMandiriNo.value=data.settings.mandiriNo;
+}
+function esc(v){return String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
+function selectInvoice(id){tab('invoice',document.querySelectorAll('nav button')[2]);invoiceSelect.value=id;showInvoice()}
+function showInvoice(){
+ let x=data.orders.find(a=>a.id===invoiceSelect.value);if(!x)return;
+ invNo.textContent=x.id;invDate.textContent=x.date;
+ invCustomer.innerHTML='<b>'+esc(x.customer)+'</b>'+(x.phone?' &nbsp;·&nbsp; '+esc(x.phone):'');
+ invItems.innerHTML=`<tr><td>${esc(x.product)}</td><td style="text-align:right">${rp(x.price)}</td><td style="text-align:center">${x.qty}</td><td style="text-align:right">${rp(x.total)}</td></tr>`;
+ invTotal.textContent=rp(x.total);invDp.textContent=rp(x.dp);invRemain.textContent=rp(Math.max(0,x.total-x.dp));
+}
+function printInvoice(){window.print()}
+function saveSettings(){
+ data.settings={
+  name:setName.value||defaults.settings.name,address:setAddress.value||'',phone:setPhone.value||'',
+  bcaName:setBcaName.value||'',bcaNo:setBcaNo.value||'',mandiriName:setMandiriName.value||'',mandiriNo:setMandiriNo.value||''
+ };
+ save();alert('Pengaturan disimpan');
+}
+function resetData(){if(confirm('Yakin ingin menghapus SEMUA data?')){localStorage.removeItem(key);location.reload()}}
+render();
+</script>
+</body>
+</html>
