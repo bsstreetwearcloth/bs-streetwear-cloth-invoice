@@ -45,9 +45,62 @@ th,td{text-align:left;padding:12px;border-bottom:1px solid #e5e7eb}th{background
 @media(max-width:800px){.grid{grid-template-columns:1fr 1fr}.inv-head{grid-template-columns:90px 1fr}.inv-meta{grid-column:2;text-align:left}.invoice-paper{padding:25px 18px}.inv-summary{width:65%}}
 @media(max-width:520px){.grid{grid-template-columns:1fr}.inv-head{grid-template-columns:1fr}.inv-meta{grid-column:auto}.inv-summary{width:100%}.payment{margin-top:60px}.bank-grid{grid-template-columns:1fr}}
 @media print{
-body{background:#fff}.no-print,header,nav,main>.page:not(#invoice){display:none!important}
-#invoice{display:block!important;padding:0!important}.invoice-paper{box-shadow:none;border-radius:0;max-width:none;padding:25px 30px}
-@page{size:A4;margin:10mm}
+*{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+html,body{background:#fff!important;margin:0!important;padding:0!important}
+body{font-size:11px!important}
+.no-print,header,nav,main>.page:not(#invoice){display:none!important}
+main{display:block!important;max-width:none!important;margin:0!important;padding:0!important}
+#invoice{display:block!important;padding:0!important;margin:0!important}
+.invoice-paper{
+  position:relative!important;
+  width:190mm!important;
+  height:277mm!important;
+  min-height:277mm!important;
+  max-width:none!important;
+  margin:0 auto!important;
+  padding:9mm 10mm 34mm!important;
+  box-shadow:none!important;
+  border-radius:0!important;
+  overflow:hidden!important;
+}
+.inv-topline{height:5px!important;margin-bottom:10px!important}
+.inv-head{grid-template-columns:28mm 1fr 35mm!important;gap:7mm!important}
+.logo-box{width:27mm!important;height:21mm!important;font-size:11px!important;border-radius:6px!important}
+.inv-company h3{font-size:18px!important;margin:2px 0 6px!important}
+.inv-company p{font-size:9px!important;margin:3px 0!important}
+.inv-meta{font-size:9px!important}
+.inv-meta b{font-size:10px!important;margin-bottom:2px!important}
+.inv-meta .value{font-size:10px!important;margin-bottom:9px!important}
+.inv-customer{margin-top:22mm!important;margin-bottom:8mm!important}
+.inv-customer .label{font-size:9px!important;margin-bottom:6px!important}
+.inv-customer b{font-size:11px!important}
+.inv-table th{font-size:8px!important;padding:6px!important}
+.inv-table td{font-size:10px!important;padding:5px!important}
+.inv-summary{width:50%!important;margin-top:10px!important}
+.sum-row{padding:5px 0!important;font-size:10px!important}
+.sum-row.remaining{margin-top:6px!important;padding:9px!important}
+.payment{
+  position:absolute!important;
+  left:10mm!important;
+  right:10mm!important;
+  bottom:12mm!important;
+  margin:0!important;
+  padding:9px 11px!important;
+  border-radius:6px!important;
+}
+.payment h4{font-size:10px!important;margin:0 0 8px!important}
+.bank-grid{gap:15mm!important}
+.bank b{font-size:10px!important;margin-bottom:4px!important}
+.bank p{font-size:8.5px!important;margin:3px 0!important}
+.thanks{
+  position:absolute!important;
+  left:10mm!important;
+  right:10mm!important;
+  bottom:5mm!important;
+  margin:0!important;
+  font-size:8px!important;
+}
+@page{size:A4 portrait;margin:10mm}
 }
 </style>
 </head>
@@ -260,6 +313,7 @@ function render(){
  expenseTable.innerHTML=data.expenses.map((x,i)=>`<tr><td>${x.date}</td><td>${esc(x.name)}</td><td>${rp(x.amount)}</td><td><button class="btn red" onclick="delExpense(${i})">×</button></td></tr>`).join('')||'<tr><td colspan="4">Belum ada pengeluaran.</td></tr>';
  reportTable.innerHTML=data.orders.map(x=>`<tr><td>${x.date}</td><td>${x.id}</td><td>${esc(x.customer)}</td><td>${rp(x.total)}</td></tr>`).join('')||'<tr><td>Belum ada data.</td></tr>';
  invoiceSelect.innerHTML='<option value="">-- Pilih Pesanan --</option>'+data.orders.map(x=>`<option value="${x.id}">${x.id} - ${esc(x.customer)}</option>`).join('');
+ if(data.orders.length && !invoiceSelect.value){invoiceSelect.value=data.orders[0].id;showInvoice()}
 
  storeTitle.textContent=data.settings.name;invStoreName.textContent=data.settings.name;storeAddress.textContent=data.settings.address;
  storePhone.textContent='WhatsApp: '+(data.settings.phone||'-');
