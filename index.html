@@ -54,7 +54,11 @@ th,td{text-align:left;padding:11px;border-bottom:1px solid var(--line)}th{backgr
 .grid{grid-template-columns:1fr}.inv-head{grid-template-columns:1fr}.inv-meta{grid-column:auto}.inv-summary{width:100%}.payment{margin-top:65px}.bank-grid{grid-template-columns:1fr}.footer-inv{flex-direction:column;gap:5px}
 }
 
-@media print{
+@media print{@page{
+  size:A4 portrait;
+  margin:0;
+}
+  
 *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
 html,body{background:#fff!important;margin:0!important;padding:0!important;width:210mm!important;height:297mm!important}
 body>*{display:none!important}
