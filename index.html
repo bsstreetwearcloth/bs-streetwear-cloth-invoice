@@ -321,10 +321,11 @@ function esc(v){
   return String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
 }
 function goOrders(){
-  history.back();
+  window.location.href='BS_Streetwear_Invoice_Professional%203.html#orders';
 }
 function goHome(){
-  history.back();
+  window.location.href='BS_Streetwear_Invoice_Professional%203.html#dashboard';
+}
 }
 window.addEventListener('DOMContentLoaded',loadStoreData);
 </script>
