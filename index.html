@@ -319,12 +319,12 @@ function loadStoreData(){
 }
 function esc(v){
   return String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
+}function goOrders(){
+  window.location.href='https://bsstreetwearcloth.github.io/bs-streetwear-cloth-invoice/BS_Streetwear_Invoice_Professional%203.html#orders';
 }
-function goOrders(){
-  window.location.href='BS_Streetwear_Invoice_Professional%203.html#orders';
-}
+
 function goHome(){
-  window.location.href='BS_Streetwear_Invoice_Professional%203.html#dashboard';
+  window.location.href='https://bsstreetwearcloth.github.io/bs-streetwear-cloth-invoice/BS_Streetwear_Invoice_Professional%203.html#dashboard';
 }
 }
 window.addEventListener('DOMContentLoaded',loadStoreData);
