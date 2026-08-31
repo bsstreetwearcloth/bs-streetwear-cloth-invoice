@@ -44,8 +44,12 @@ addOrderItem();
 render();
 
 if(location.hash==='#orders'){
-  tab('orders',document.querySelector('.nav button:nth-child(2)'));
-}else{
-  tab('dashboard',document.querySelector('.nav button:nth-child(1)'));
+  setTimeout(function(){
+    tab('orders',document.querySelector('.nav button:nth-child(2)'));
+  },100);
+}else if(location.hash==='#dashboard'){
+  setTimeout(function(){
+    tab('dashboard',document.querySelector('.nav button:nth-child(1)'));
+  },100);
 }
 </script></body></html>
