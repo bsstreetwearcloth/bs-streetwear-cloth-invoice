@@ -157,24 +157,30 @@ page-break-before:avoid!important;page-break-after:avoid!important;page-break-in
     margin:0;
   }
 
-  html,body{
-    html, body{
+html, body{
     width:210mm !important;
+    height:294mm !important;
+    max-height:294mm !important;
     margin:0 !important;
     padding:0 !important;
+    overflow:hidden !important;
 }
 
 main, #invoice{
     width:210mm !important;
+    height:294mm !important;
+    max-height:294mm !important;
+    min-height:0 !important;
     margin:0 !important;
     padding:0 !important;
+    overflow:hidden !important;
 }
 
 .invoice-paper{
     width:210mm !important;
-    min-height:297mm !important;
-    height:297mm !important;
-    max-height:297mm !important;
+    height:294mm !important;
+    min-height:0 !important;
+    max-height:294mm !important;
     margin:0 !important;
     padding:10mm 12mm 22mm !important;
     box-sizing:border-box !important;
@@ -185,7 +191,6 @@ main, #invoice{
     break-before:avoid !important;
     break-after:avoid !important;
     break-inside:avoid !important;
-}
 }
   
 </style>
